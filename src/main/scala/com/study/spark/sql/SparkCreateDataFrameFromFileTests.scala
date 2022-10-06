@@ -9,10 +9,10 @@ import org.apache.spark.sql.SparkSession
  * @param
  * @return
  */
-object SparkCreateDataFrameTests {
+object SparkCreateDataFrameFromFileTests {
   def main(args: Array[String]): Unit = {
     // 创建Spark运行环境对象
-    val conf = new SparkConf().setMaster("local[*]").setAppName("Spark Create DataFrame")
+    val conf = new SparkConf().setMaster("local[*]").setAppName("Spark Create DataFrame From File")
 
     //创建SparkSession
     val spark = SparkSession.builder().config(conf).getOrCreate()
@@ -32,6 +32,9 @@ object SparkCreateDataFrameTests {
     //spark的隐式转换,这里的spark其实就是环境对象的名称,要求这个变量spark必须使用val声明
     df.select('name).show()
     df.select('name,'age).show()
+    df.select($"name",$"age").show()
+
+    df.groupBy()
 
     //释放资源
     spark.stop()
