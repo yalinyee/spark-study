@@ -20,8 +20,6 @@ object SparkWindowOperationsTests {
     // 初始化SparkStreamingContext,3秒钟采集一次
     val ssc = new StreamingContext(conf,Seconds(3))
 
-    ssc.sparkContext.setCheckpointDir("cp")
-
     // 定义Kafka参数
     val kafkaPara: Map[String, Object] = Map[String, Object](
       ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG -> "localhost:9092,localhost:9093,localhost:9094",
@@ -44,14 +42,7 @@ object SparkWindowOperationsTests {
     ds.flatMap(_.split(" "))
       .map((_,1L))
       .window(Seconds(9))
-      .updateStateByKey[Long](
-        (seq: Seq[Long],buffer: Option[Long]) =>
-        {
-          val newBufferValue = buffer.getOrElse(0L) + seq.sum
-
-          Option(newBufferValue)
-        }
-      )
+      .reduceByKey(_ + _).print()
 
     // 启动采集器
     ssc.start()
